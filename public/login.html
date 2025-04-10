@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawRaksha - Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgba(120, 104, 230, 0.8);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M25 15c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm10 0c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm-20 10c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm30 0c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z' fill='%238e7eef' fill-opacity='0.2'/%3E%3C/svg%3E");
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, #4A55A2, #5D5FEF);
+        }
+        .auth-container {
+            text-align: center;
+            position: relative;
+        }
+        .logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 2px solid #4A55A2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(93, 0, 0, 0.1);
+    overflow: hidden; /* This ensures the image stays within the circular container */
+}
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This makes sure the image covers the area properly */
+}
+        h1 {
+            color: #000000;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        h2 {
+            color: #4A55A2;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 22px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a0202;
+            font-size: 15px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #4A55A2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(90deg, #4A55A2, #5D5FEF);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 14, 43, 0.3);
+        }
+        button::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff' opacity='0.2'%3E%3Cpath d='M4.5,9.5c0,1.5,1.5,3,3,3s3-1.5,3-3s-1.5-3-3-3S4.5,8,4.5,9.5z M16.5,9.5c0-1.5-1.5-3-3-3s-3,1.5-3,3s1.5,3,3,3S16.5,11,16.5,9.5z M19.5,9.5c0-1.5-1.5-3-3-3s-3,1.5-3,3s1.5,3,3,3S19.5,11,19.5,9.5z M7.5,9.5c0-1.5-1.5-3-3-3s-3,1.5-3,3s1.5,3,3,3S7.5,11,7.5,9.5z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .toggle-form {
+            margin-top: 25px;
+            cursor: pointer;
+            color: #4A55A2;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .toggle-form:hover {
+            color: #5D5FEF;
+            text-decoration: underline;
+        }
+        .pet-decorations {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .pet-decoration {
+            position: absolute;
+            font-size: 28px;
+            color: #070707;
+        }
+        .pet-decoration:nth-child(1) { top: 10%; left: 5%; }
+        .pet-decoration:nth-child(2) { top: 20%; right: 8%; }
+        .pet-decoration:nth-child(3) { bottom: 15%; left: 10%; }
+        .pet-decoration:nth-child(4) { bottom: 25%; right: 5%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pet-decorations">
+            <div class="pet-decoration">🐾</div>
+            <div class="pet-decoration">🐾</div>
+            <div class="pet-decoration">🐾</div>
+            <div class="pet-decoration">🐾</div>
+        </div>
+        <div id="auth-container" class="auth-container">
+            <div class="logo">
+                <img src="LogoPNG.png" alt="PawRaksha Logo">
+            </div>
+            <h1>PawRaksha - Pet Care</h1>
+            
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2>Welcome Back!</h2>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                </div>
+                <button id="login-button">Login</button>
+                <p class="toggle-form" id="show-signup">Don't have an account? Sign up here</p>
+            </div>
+            
+            <!-- Sign up Form -->
+            <div id="signup-form" style="display: none;">
+                <h2>Join PawRaksha</h2>
+                <div class="form-group">
+                    <label for="signup-name">Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="Confirm your password">
+                </div>
+                <button id="signup-button">Create Account</button>
+                <p class="toggle-form" id="show-login">Already have an account? Login here</p>
+            </div>
+        </div>
+
+    <script>
+        // User database - in a real app, this would be on a server
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        // Clear any existing user session when the login page loads
+        localStorage.removeItem('currentUser');
+        
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const showSignup = document.getElementById('show-signup');
+        const showLogin = document.getElementById('show-login');
+        const loginButton = document.getElementById('login-button');
+        const signupButton = document.getElementById('signup-button');
+        
+        // Toggle between login and signup forms
+        showSignup.addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+        });
+        
+        showLogin.addEventListener('click', () => {
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+        
+        // Sign up functionality
+        signupButton.addEventListener('click', () => {
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
+            
+            if (!name || !email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Check if user already exists
+            if (users.some(user => user.email === email)) {
+                alert('This email is already registered');
+                return;
+            }
+            
+            // Create new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto-login after signup
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            
+            // Redirect to pawraksha.html
+            window.location.href = 'pawraksha.html';
+        });
+        
+        // Login functionality
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            const user = users.find(user => user.email === email && user.password === password);
+            
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Redirect to pawraksha.html
+                window.location.href = 'pawraksha.html';
+            } else {
+                alert('Invalid email or password');
+            }
+        });
+    </script>
+</body>
+</html>

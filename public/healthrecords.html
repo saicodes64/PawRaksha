@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Health Records</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Feature Card Styles */
+        .feature-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #4a67d5;
+            margin-bottom: 15px;
+        }
+        
+        .feature-btn {
+            background-color: #4a67d5;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .feature-btn:hover {
+            background-color: #3550b2;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+        }
+        
+        /* Health Records Styles */
+        .health-records-container {
+            margin-top: 20px;
+        }
+        
+        .health-record {
+            background-color: #f9f9f9;
+            border-left: 4px solid #4a67d5;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .record-date {
+            font-weight: bold;
+            color: #4a67d5;
+        }
+        
+        .record-type {
+            font-weight: 500;
+            margin-left: 10px;
+            background-color: #e6ecff;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+        
+        .record-description {
+            margin-top: 10px;
+        }
+        
+        .add-record-form {
+            background-color: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .form-submit-btn {
+            background-color: #4a67d5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        
+        .form-submit-btn:hover {
+            background-color: #3550b2;
+        }
+        
+        .health-records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+        }
+        
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .page-title {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .section-title {
+            color: #4a67d5;
+            margin: 40px 0 20px 0;
+            border-bottom: 2px solid #e6ecff;
+            padding-bottom: 10px;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background-color: #ff6b81;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Feature Card for Main Page -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-paw"></i>
+            </div>
+            <h3>Health Records</h3>
+            <p>Maintain a complete history of your pet's health records, medications, and vet visits all in one place.</p>
+            <p style="font-style: italic; margin-bottom: 20px;">Last vet visit: <span id="last-visit-date">Loading...</span></p>
+            <button class="feature-btn" id="add-record-btn">Add Record</button>
+        </div>
+        
+        <!-- Health Records Page Content -->
+        <h2 class="page-title">Pet Health Records</h2>
+        
+        <!-- Add New Record Form -->
+        <div id="add-record-section" style="display: none;">
+            <h3 class="section-title">Add New Health Record</h3>
+            <div class="add-record-form">
+                <form id="add-health-record-form">
+                    <div class="form-group">
+                        <label for="record-date">Date</label>
+                        <input type="date" id="record-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="record-type">Record Type</label>
+                        <select id="record-type" required>
+                            <option value="Vet Visit">Vet Visit</option>
+                            <option value="Vaccination">Vaccination</option>
+                            <option value="Medication">Medication</option>
+                            <option value="Surgery">Surgery</option>
+                            <option value="Test Results">Test Results</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="record-description">Description</label>
+                        <textarea id="record-description" placeholder="Enter details about the health record..." required></textarea>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="form-submit-btn">Save Record</button>
+                        <button type="button" class="feature-btn" id="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Health Records List -->
+        <h3 class="section-title">Record History</h3>
+        <div class="health-records-container" id="health-records-list">
+            <!-- Records will be added here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        // User session management
+        let currentUser = null;
+        const localStorageKey = 'petHealthRecords';
+        
+        // Check if user is logged in (implement this according to your login system)
+        function checkUserLoginStatus() {
+            // This is a placeholder - replace with your actual login check
+            const userToken = localStorage.getItem('userToken');
+            if (userToken) {
+                try {
+                    currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    console.log('User logged in:', currentUser);
+                    return true;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            return false;
+        }
+        
+        // Initialize health records from storage
+        function initializeHealthRecords() {
+            let healthRecords = [];
+            
+            if (checkUserLoginStatus() && currentUser) {
+                // Use user-specific key for storage
+                const userStorageKey = `${localStorageKey}_${currentUser.id}`;
+                const storedRecords = localStorage.getItem(userStorageKey);
+                
+                if (storedRecords) {
+                    try {
+                        healthRecords = JSON.parse(storedRecords);
+                    } catch (e) {
+                        console.error('Error parsing health records:', e);
+                        healthRecords = [];
+                    }
+                }
+            } else {
+                // Fallback to anonymous storage if not logged in
+                const storedRecords = localStorage.getItem(localStorageKey);
+                if (storedRecords) {
+                    try {
+                        healthRecords = JSON.parse(storedRecords);
+                    } catch (e) {
+                        console.error('Error parsing health records:', e);
+                        healthRecords = [];
+                    }
+                }
+            }
+            
+            return healthRecords;
+        }
+        
+        // Save health records to storage
+        function saveHealthRecords(records) {
+            if (checkUserLoginStatus() && currentUser) {
+                // Use user-specific key for storage
+                const userStorageKey = `${localStorageKey}_${currentUser.id}`;
+                localStorage.setItem(userStorageKey, JSON.stringify(records));
+            } else {
+                // Fallback to anonymous storage if not logged in
+                localStorage.setItem(localStorageKey, JSON.stringify(records));
+            }
+        }
+
+        // Health records array
+        let healthRecords = initializeHealthRecords();
+
+        // DOM Elements
+        const addRecordBtn = document.getElementById('add-record-btn');
+        const addRecordSection = document.getElementById('add-record-section');
+        const recordForm = document.getElementById('add-health-record-form');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const recordsList = document.getElementById('health-records-list');
+        const lastVisitDate = document.getElementById('last-visit-date');
+
+        // Event Listeners
+        addRecordBtn.addEventListener('click', showAddRecordForm);
+        cancelBtn.addEventListener('click', hideAddRecordForm);
+        recordForm.addEventListener('submit', addHealthRecord);
+        document.addEventListener('DOMContentLoaded', updateLastVisitDisplay);
+
+        // Functions
+        function showAddRecordForm() {
+            addRecordSection.style.display = 'block';
+            addRecordBtn.style.display = 'none';
+        }
+
+        function hideAddRecordForm() {
+            addRecordSection.style.display = 'none';
+            addRecordBtn.style.display = 'inline-block';
+            recordForm.reset();
+        }
+
+        function addHealthRecord(e) {
+            e.preventDefault();
+            
+            const date = document.getElementById('record-date').value;
+            const type = document.getElementById('record-type').value;
+            const description = document.getElementById('record-description').value;
+            
+            const newRecord = {
+                id: Date.now().toString(),
+                date: date,
+                type: type,
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            
+            healthRecords.unshift(newRecord); // Add to beginning of array
+            saveHealthRecords(healthRecords);
+            
+            displayHealthRecords();
+            updateLastVisitDisplay();
+            
+            // Reset form and hide
+            recordForm.reset();
+            hideAddRecordForm();
+        }
+
+        function deleteRecord(recordId) {
+            // Find the index of the record with the given ID
+            const recordIndex = healthRecords.findIndex(record => record.id === recordId);
+            
+            if (recordIndex !== -1) {
+                // Remove the record from the array
+                healthRecords.splice(recordIndex, 1);
+                
+                // Save the updated records
+                saveHealthRecords(healthRecords);
+                
+                // Update the display
+                displayHealthRecords();
+                updateLastVisitDisplay();
+            }
+        }
+
+        function displayHealthRecords() {
+            if (healthRecords.length === 0) {
+                recordsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-notes-medical"></i>
+                        <p>No health records found. Add your pet's first health record using the "Add Record" button.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            recordsList.innerHTML = '';
+            healthRecords.forEach(record => {
+                const recordElement = document.createElement('div');
+                recordElement.className = 'health-record';
+                recordElement.id = `record-${record.id}`;
+                
+                // Format date for display
+                const displayDate = new Date(record.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                recordElement.innerHTML = `
+                    <div>
+                        <span class="record-date">${displayDate}</span>
+                        <span class="record-type">${record.type}</span>
+                    </div>
+                    <div class="record-description">${record.description}</div>
+                    <button class="delete-btn" onclick="deleteRecord('${record.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                
+                recordsList.appendChild(recordElement);
+            });
+        }
+
+        function updateLastVisitDisplay() {
+            // Look for the most recent "Vet Visit" type record
+            const vetVisits = healthRecords.filter(record => record.type === 'Vet Visit');
+            
+            if (vetVisits.length > 0) {
+                // Sort by date (newest first)
+                vetVisits.sort((a, b) => new Date(b.date) - new Date(a.date));
+                const lastVisit = new Date(vetVisits[0].date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                if (lastVisitDate) {
+                    lastVisitDate.textContent = lastVisit;
+                }
+            } else {
+                if (lastVisitDate) {
+                    lastVisitDate.textContent = 'No vet visits recorded';
+                }
+            }
+        }
+
+        // Handler for when vaccination data is entered elsewhere
+        function addVaccinationRecord(date, vaccineType, notes) {
+            const description = `Vaccination: ${vaccineType}${notes ? ' - ' + notes : ''}`;
+            
+            const newRecord = {
+                id: Date.now().toString(),
+                date: date,
+                type: 'Vaccination',
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            
+            healthRecords.unshift(newRecord);
+            saveHealthRecords(healthRecords);
+            displayHealthRecords();
+            updateLastVisitDisplay();
+        }
+
+        // Initialize display
+        displayHealthRecords();
+        updateLastVisitDisplay();
+
+        // Event listening for vaccination tracker updates (integrate with your existing system)
+        document.addEventListener('vaccinationAdded', function(e) {
+            const vacData = e.detail;
+            addVaccinationRecord(vacData.date, vacData.type, vacData.notes);
+        });
+        
+        // Event listener for when the user logs in
+        document.addEventListener('userLoggedIn', function(e) {
+            currentUser = e.detail.user;
+            healthRecords = initializeHealthRecords();
+            displayHealthRecords();
+            updateLastVisitDisplay();
+        });
+    </script>
+</body>
+</html>

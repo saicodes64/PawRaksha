@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pet Care Reminders</title>
+    <style>
+        /* Keep your existing styles here */
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4A55A2;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            color: #333;
+            border: 1px solid #ddd;
+            transition: background 0.3s ease;
+        }
+
+        ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .add-reminder {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="datetime-local"]:focus,
+        input[type="email"]:focus {
+            border-color: #4A55A2;
+        }
+
+        button {
+            background-color: #4A55A2;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4A55A2;
+        }
+
+        .remove-btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background-color: #e53935;
+        }
+
+        .email-btn {
+            background-color: #4CAF50;
+            margin-left: 5px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4A55A2;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: #4A55A2;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Pet Care Reminders</h1>
+        <ul id="reminderList">
+            <!-- Reminders will appear here -->
+        </ul>
+
+        <div class="add-reminder">
+            <input type="text" id="petName" placeholder="Pet Name" />
+            <input type="text" id="reminderText" placeholder="Enter reminder" />
+            <input type="datetime-local" id="reminderTime" />
+            <input type="email" id="ownerEmail" placeholder="Owner's Email (for notification)" />
+            <button onclick="addReminder()">Add Reminder</button>
+        </div>
+        
+        <div class="success-message" id="emailSuccess">
+            Email notification sent successfully!
+        </div>
+
+        <a href="pawraksha.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <script>
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+
+        function updateReminders() {
+            const list = document.getElementById('reminderList');
+            list.innerHTML = '';
+
+            reminders.forEach((reminder, index) => {
+                const listItem = document.createElement('li');
+                const timeLeft = getTimeLeft(reminder.date);
+
+                listItem.innerHTML = `
+                    🐾 ${reminder.petName}: ${reminder.text} - ${timeLeft}
+                    <div>
+                        <button class="email-btn" onclick="sendEmailReminder(${index})">Email</button>
+                        <button class="remove-btn" onclick="removeReminder(${index})">Remove</button>
+                    </div>
+                `;
+                list.appendChild(listItem);
+
+                // Update countdown every second
+                const interval = setInterval(() => {
+                    const updatedTimeLeft = getTimeLeft(reminder.date);
+                    listItem.innerHTML = `
+                        🐾 ${reminder.petName}: ${reminder.text} - ${updatedTimeLeft}
+                        <div>
+                            <button class="email-btn" onclick="sendEmailReminder(${index})">Email</button>
+                            <button class="remove-btn" onclick="removeReminder(${index})">Remove</button>
+                        </div>
+                    `;
+
+                    if (new Date(reminder.date) <= new Date()) {
+                        clearInterval(interval);
+                        showNotification(reminder.text);
+                        playAlarm();
+                        
+                        // Send email notification automatically when time is up
+                        if (reminder.email) {
+                            sendEmailReminder(index);
+                        }
+                        
+                        removeReminder(index);
+                    }
+                }, 1000);
+            });
+
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+        }
+
+        function addReminder() {
+            const petName = document.getElementById('petName').value;
+            const text = document.getElementById('reminderText').value;
+            const date = document.getElementById('reminderTime').value;
+            const email = document.getElementById('ownerEmail').value;
+
+            if (!petName || !text || !date) {
+                alert('Please enter pet name, reminder text, and time.');
+                return;
+            }
+
+            reminders.push({ petName, text, date, email });
+            updateReminders();
+
+            // Clear input fields
+            document.getElementById('petName').value = '';
+            document.getElementById('reminderText').value = '';
+            document.getElementById('reminderTime').value = '';
+            document.getElementById('ownerEmail').value = '';
+        }
+
+        function removeReminder(index) {
+            reminders.splice(index, 1);
+            updateReminders();
+        }
+        
+        async function sendEmailReminder(index) {
+            const reminder = reminders[index];
+            
+            if (!reminder.email) {
+                alert('No email address provided for this reminder.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/send-reminder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        petName: reminder.petName,
+                        ownerEmail: reminder.email,
+                        reminderText: reminder.text,
+                        reminderTime: reminder.date
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const successMsg = document.getElementById('emailSuccess');
+                    successMsg.style.display = 'block';
+                    
+                    // Hide success message after 3 seconds
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 3000);
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while sending the email');
+            }
+        }
+
+        function getTimeLeft(date) {
+            const now = new Date();
+            const target = new Date(date);
+            const diff = target - now;
+
+            if (diff <= 0) return 'Time up!';
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        function showNotification(message) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Reminder', { body: message });
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                        new Notification('Reminder', { body: message });
+                    }
+                });
+            }
+        }
+
+        function playAlarm() {
+            const audio = new Audio('https://www.soundjay.com/button/beep-07.wav');
+            audio.play();
+        }
+
+        // Request notification permission on load
+        if ('Notification' in window) {
+            Notification.requestPermission();
+        }
+
+        updateReminders(); // Load existing reminders on page load
+    </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawRaksha - Smart Pet Health & Wellness Tracker - pet profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background-color: #4A55A2;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-right: 20px;
+        }
+
+        .profile-header-info {
+            flex-grow: 1;
+        }
+
+        .profile-header-info h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .profile-header-info p {
+            opacity: 0.8;
+        }
+
+        .edit-profile-btn {
+            background-color: white;
+            color: #4A55A2;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-profile-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .profile-tabs {
+            display: flex;
+            background-color: #f1f3f5;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .profile-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .profile-tab.active {
+            background-color: #4A55A2;
+            color: white;
+        }
+
+        .profile-content {
+            padding: 20px;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .profile-card {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-card-icon {
+            background-color: #4A55A2;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .vaccination-timeline {
+            list-style-type: none;
+        }
+
+        .vaccination-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f1f3f5;
+            border-radius: 10px;
+        }
+
+        .vaccination-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #4A55A2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <img src="/api/placeholder/120/120" alt="Pet Profile" class="profile-image">
+            <div class="profile-header-info">
+                <h1>Buddy</h1>
+                <p>Golden Retriever | 3 years old</p>
+                <button class="edit-profile-btn">Edit Profile</button>
+            </div>
+        </div>
+
+        <!-- Profile Tabs -->
+        <div class="profile-tabs">
+            <div class="profile-tab active" data-tab="overview">Overview</div>
+            <div class="profile-tab" data-tab="health">Health</div>
+            <div class="profile-tab" data-tab="care">Care</div>
+            <div class="profile-tab" data-tab="records">Records</div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <!-- Overview Tab -->
+            <div class="tab-section active" id="overview-section">
+                <div class="profile-grid">
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-weight"></i>
+                        </div>
+                        <div>
+                            <h3>Weight</h3>
+                            <p>25 kg</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-ruler"></i>
+                        </div>
+                        <div>
+                            <h3>Height</h3>
+                            <p>55 cm</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <div>
+                            <h3>Birthday</h3>
+                            <p>March 15, 2020</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-dna"></i>
+                        </div>
+                        <div>
+                            <h3>Breed</h3>
+                            <p>Golden Retriever</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Tab -->
+            <div class="tab-section" id="health-section">
+                <h2>Vaccination History</h2>
+                <ul class="vaccination-timeline">
+                    <li class="vaccination-item">
+                        <div class="vaccination-icon">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <div>
+                            <h3>Rabies Vaccine</h3>
+                            <p>Last Administered: January 15, 2024</p>
+                            <p>Next Due: January 15, 2025</p>
+                        </div>
+                    </li>
+                    <li class="vaccination-item">
+                        <div class="vaccination-icon">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <div>
+                            <h3>Distemper Vaccine</h3>
+                            <p>Last Administered: December 1, 2023</p>
+                            <p>Next Due: December 1, 2024</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Care Tab -->
+            <div class="tab-section" id="care-section">
+                <h2>Care Schedule</h2>
+                <div class="profile-grid">
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-shower"></i>
+                        </div>
+                        <div>
+                            <h3>Bathing</h3>
+                            <p>Every 4 weeks</p>
+                            <p>Next Bath: March 20, 2025</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <div>
+                            <h3>Grooming</h3>
+                            <p>Every 6 weeks</p>
+                            <p>Next Grooming: April 1, 2025</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-walking"></i>
+                        </div>
+                        <div>
+                            <h3>Walking</h3>
+                            <p>Daily, 2 times</p>
+                            <p>Morning & Evening</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div>
+                            <h3>Feeding</h3>
+                            <p>3 times daily</p>
+                            <p>Morning, Noon, Evening</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Records Tab -->
+            <div class="tab-section" id="records-section">
+                <h2>Medical Records</h2>
+                <div class="profile-grid">
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div>
+                            <h3>Vet Visits</h3>
+                            <p>Last Visit: February 15, 2024</p>
+                            <p>Next Checkup: May 15, 2024</p>
+                        </div>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-card-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div>
+                            <h3>Medications</h3>
+                            <p>Flea Prevention</p>
+                            <p>Last Administered: February 20, 2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Edit Pet Profile</h2>
+            <form id="editPetForm">
+                <div class="form-group">
+                    <label>Pet Name</label>
+                    <input type="text" id="petName" value="Buddy">
+                </div>
+                <div class="form-group">
+                    <label>Breed</label>
+                    <input type="text" id="petBreed" value="Golden Retriever">
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="petAge" value="3">
+                </div>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.profile-tab');
+            const tabSections = document.querySelectorAll('.tab-section');
+    
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabSections.forEach(s => s.classList.remove('active'));
+    
+                    this.classList.add('active');
+                    document.getElementById(`${this.dataset.tab}-section`).classList.add('active');
+                });
+            });
+    
+            // Load data from local storage
+            const petName = localStorage.getItem('petName') || 'Buddy';
+            const petBreed = localStorage.getItem('petBreed') || 'Golden Retriever';
+            const petAge = localStorage.getItem('petAge') || '3';
+    
+            document.querySelector('.profile-header-info h1').textContent = petName;
+            document.querySelector('.profile-header-info p').textContent = `${petBreed} | ${petAge} years old`;
+    
+            // Edit Profile Modal
+            const editProfileBtn = document.querySelector('.edit-profile-btn');
+            const editProfileModal = document.getElementById('editProfileModal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const editPetForm = document.getElementById('editPetForm');
+    
+            document.getElementById('petName').value = petName;
+            document.getElementById('petBreed').value = petBreed;
+            document.getElementById('petAge').value = petAge;
+    
+            // Open modal
+            editProfileBtn.addEventListener('click', function() {
+                editProfileModal.style.display = 'block';
+            });
+    
+            // Close modal
+            closeModalBtn.addEventListener('click', function() {
+                editProfileModal.style.display = 'none';
+            });
+    
+            window.addEventListener('click', function(event) {
+                if (event.target == editProfileModal) {
+                    editProfileModal.style.display = 'none';
+                }
+            });
+    
+            // Form submission
+            editPetForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+    
+                const petName = document.getElementById('petName').value;
+                const petBreed = document.getElementById('petBreed').value;
+                const petAge = document.getElementById('petAge').value;
+    
+                // Save to local storage
+                localStorage.setItem('petName', petName);
+                localStorage.setItem('petBreed', petBreed);
+                localStorage.setItem('petAge', petAge);
+    
+                // Update profile header
+                document.querySelector('.profile-header-info h1').textContent = petName;
+                document.querySelector('.profile-header-info p').textContent = `${petBreed} | ${petAge} years old`;
+    
+                editProfileModal.style.display = 'none';
+    
+                alert('Pet profile updated successfully!');
+            });
+        });
+    </script>
+    
+</body>
+</html>

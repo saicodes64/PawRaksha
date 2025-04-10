@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Vaccination Bill Generation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        h1 {
+            color: #4A55A2;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            border-color: #4A55A2;
+        }
+
+        button {
+            background-color: #4A55A2;
+            color: #ffffff;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #3a446e;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #4A55A2;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: #3a446e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Pet Vaccination Bill Generation</h1>
+        
+        <form id="billForm">
+            <div class="form-group">
+                <label for="ownerName">Pet Owner Name:</label>
+                <input type="text" id="ownerName" name="ownerName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Owner Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="petName">Pet Name:</label>
+                <input type="text" id="petName" name="petName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="petType">Pet Type:</label>
+                <select id="petType" name="petType" required>
+                    <option value="">-- Select Pet Type --</option>
+                    <option value="Dog">Dog</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="vaccineType">Vaccine Type:</label>
+                <select id="vaccineType" name="vaccineType" required>
+                    <option value="">-- Select Vaccine --</option>
+                    <option value="Rabies">Rabies</option>
+                    <option value="Distemper">Distemper</option>
+                    <option value="Parvovirus">Parvovirus</option>
+                    <option value="Bordetella">Bordetella</option>
+                    <option value="Leptospirosis">Leptospirosis</option>
+                    <option value="FVRCP">FVRCP (Feline)</option>
+                    <option value="FeLV">FeLV (Feline Leukemia)</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Price (₹):</label>
+                <input type="number" id="price" name="price" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Vaccination Date:</label>
+                <input type="date" id="date" name="date">
+            </div>
+            
+            <button type="submit">Generate & Send Bill</button>
+        </form>
+        
+        <div class="success-message" id="billSuccess">
+            Bill has been generated and sent successfully!
+        </div>
+        
+        <a href="pawraksha.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('date').valueAsDate = new Date();
+        
+        // Bill form submission
+        document.getElementById('billForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                ownerName: document.getElementById('ownerName').value,
+                email: document.getElementById('email').value,
+                petName: document.getElementById('petName').value,
+                petType: document.getElementById('petType').value,
+                vaccineType: document.getElementById('vaccineType').value,
+                price: document.getElementById('price').value,
+                date: document.getElementById('date').value
+            };
+            
+            try {
+                const response = await fetch('/api/generate-pet-bill', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const successMsg = document.getElementById('billSuccess');
+                    successMsg.style.display = 'block';
+                    this.reset();
+                    document.getElementById('date').valueAsDate = new Date();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 5000);
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request');
+            }
+        });
+    </script>
+</body>
+</html>
