@@ -20,8 +20,8 @@ app.get('/', (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail', // Or another service like Outlook
   auth: {
-    user: 'aiapp12937@gmail.com', // Replace with your email
-    pass: 'mvxxzmwmggfqgeou' // Use app password for Gmail
+    user: 'example@gmail.com', // Replace with your email
+    pass: 'xxxxxxxxxxxxxxxx' // Use app password for Gmail
   }
 });
 
@@ -72,7 +72,7 @@ app.post('/api/generate-pet-bill', async (req, res) => {
 // Function to send reminder emails
 async function sendReminderEmail(petName, email, reminderText, formattedDate) {
   const mailOptions = {
-    from: 'aiapp12937@gmail.com',
+    from: 'example@gmail.com',
     to: email,
     subject: `Pet Care Reminder for ${petName}`,
     html: `
@@ -144,7 +144,7 @@ async function generatePetBill(ownerName, petName, petType, vaccineType, price, 
 // Function to send bill email with attachment
 async function sendBillEmail(ownerName, email, petName, vaccineType, pdfPath) {
   const mailOptions = {
-    from: 'aiapp12937@gmail.com',
+    from: 'example@gmail.com',
     to: email,
     subject: `Pet Vaccination Bill for ${petName}`,
     html: `
